@@ -1,0 +1,26 @@
+{
+  "dataset_reader": {
+    "name": "json_reader",
+    "data_path": "C:\\Users\\user\\Music\\dataset1.json"
+  },
+  "chainer": {
+    "in": ["x"],
+    "in_y": ["y"],
+    "out": ["y_pred"],
+    "pipe": [
+      {
+        "name": "transformers_classifier",
+        "pretrained_model_name": "bert-base-uncased",
+        "tokenizer": "bert-base-uncased",
+        "n_classes": 2,
+        "load_path": "",
+        "save_path": "C:\\Users\\user\\Music\\saved_model"
+      }
+    ]
+  },
+  "train": {
+    "batch_size": 8,
+    "epochs": 3,
+    "metrics": ["accuracy"]
+  }
+}

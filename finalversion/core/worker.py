@@ -1,4 +1,5 @@
 from PyQt6 import QtWidgets, QtGui, QtCore
+import sys
 
 class GPTWorker(QtCore.QThread):
     response_ready = QtCore.pyqtSignal(str, str)  # текст, эмоция
@@ -11,11 +12,14 @@ class GPTWorker(QtCore.QThread):
 
     def run(self):
         try:
+            if self.driver is None:
+                raise RuntimeError("❌ WebDriver (driver) не инициализирован!")
+
             from core.gpt_bridge import send_message_to_chatgpt
+            print("[DEBUG] Отправка в GPT:", self.message[:100])
             response, emotion = send_message_to_chatgpt(self.driver, self.message, self.mood)
             self.response_ready.emit(response, emotion)
         except Exception as e:
             import traceback
-            print("[GPTWorker ERROR]")
             traceback.print_exc()
             self.response_ready.emit("(Ошибка связи с GPT)", "neutral")

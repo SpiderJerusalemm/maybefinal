@@ -172,5 +172,3 @@ class BaseLayoutWindow(QtWidgets.QMainWindow):
     def showEvent(self, event):
         super().showEvent(event)
         self.showFullScreen()
-
-    

@@ -3,16 +3,19 @@ from PyQt6 import QtWidgets, QtGui, QtCore
 class GPTWorker(QtCore.QThread):
     response_ready = QtCore.pyqtSignal(str, str)  # текст, эмоция
 
-    def __init__(self, message, mood):
+    def __init__(self, message, mood, driver):
         super().__init__()
         self.message = message
         self.mood = mood
+        self.driver = driver
 
     def run(self):
         try:
             from core.gpt_bridge import send_message_to_chatgpt
-            response, emotion = send_message_to_chatgpt(self.message, self.mood)
+            response, emotion = send_message_to_chatgpt(self.driver, self.message, self.mood)
             self.response_ready.emit(response, emotion)
         except Exception as e:
-            print(f"[GPTWorker ERROR] {e}")
+            import traceback
+            print("[GPTWorker ERROR]")
+            traceback.print_exc()
             self.response_ready.emit("(Ошибка связи с GPT)", "neutral")

@@ -3,6 +3,7 @@ import os
 from core.avatar_animator import AvatarAnimator
 from core.gpt_bridge import send_message_to_chatgpt
 from core.worker import GPTWorker
+from core.gpt_bridge import init_selenium_connection
 
 # Стартовая эмоция
 DEFAULT_EMOTION = "neutral"
@@ -21,6 +22,8 @@ class PhoneModeExpanded(QtWidgets.QMainWindow):
 
         self.old_pos = None
         self.bot_mood = "neutral"
+        self.driver = init_selenium_connection()
+        
 
         # 📱 Фон телефона
         phone_bg = QtGui.QPixmap("C:/Users/user/Music/project/phone_layout.png")
@@ -94,6 +97,7 @@ class PhoneModeExpanded(QtWidgets.QMainWindow):
             }
         """)
         self.send_button.clicked.connect(self.on_send_clicked)
+        
 
     def on_send_clicked(self):
         user_text = self.hidden_input.text().strip()
@@ -103,7 +107,7 @@ class PhoneModeExpanded(QtWidgets.QMainWindow):
         self.response_area.append(f"<b>Вы:</b> {user_text}")
         self.hidden_input.clear()
 
-        self.worker = GPTWorker(user_text, self.bot_mood)
+        self.worker = GPTWorker(user_text, self.bot_mood, self.driver)
         self.worker.response_ready.connect(self.handle_gpt_response)
         self.worker.start()
 
